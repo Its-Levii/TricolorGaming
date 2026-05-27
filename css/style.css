@@ -1691,6 +1691,172 @@ main {
   font-size: 0.85rem;
   color: var(--texto-secundario);
 }
+
+.tabs-tarjeta {
+  display: flex;
+  gap: 0;
+  margin-bottom: 24px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--borde);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px;
+  background: var(--superficie);
+  color: var(--texto-secundario);
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.tab-btn.active {
+  background: var(--dorado);
+  color: var(--fondo);
+  font-weight: 600;
+}
+
+.tab-btn:not(.active):hover {
+  background: var(--superficie-hover);
+  color: var(--texto);
+}
+
+.alert-error {
+  background: var(--superficie);
+  border: 1px solid var(--rojo);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.alert-error a {
+  color: var(--dorado);
+}
+
+.credit-rechazado {
+  text-align: center;
+  background: var(--superficie);
+  border: 1px solid var(--rojo);
+  border-radius: var(--radius);
+  padding: 40px;
+  margin-top: 30px;
+}
+
+.rechazado-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: var(--rojo);
+  color: white;
+  border-radius: 50%;
+  margin-bottom: 16px;
+}
+.rechazado-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.credit-rechazado h2 {
+  margin-bottom: 8px;
+}
+
+.credit-rechazado p {
+  color: var(--texto-secundario);
+  margin-bottom: 16px;
+}
+
+.credit-rechazado a {
+  color: var(--dorado);
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radius);
+  padding: 40px;
+  max-width: 440px;
+  width: 90%;
+  position: relative;
+  text-align: center;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--texto-secundario);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.modal-close:hover {
+  color: var(--texto);
+}
+
+.modal-content h2 {
+  margin-bottom: 8px;
+}
+
+.modal-content > p {
+  color: var(--texto-secundario);
+  margin-bottom: 20px;
+}
+
+.modal-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.modal-login-form .form-input {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--borde);
+  background: var(--fondo);
+  color: var(--texto);
+  font-size: 0.95rem;
+}
+
+.modal-login-form .form-input:focus {
+  outline: none;
+  border-color: var(--dorado);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.modal-actions .btn {
+  flex: 1;
+  min-width: 120px;
+}
+
 .about-grid {
   display: grid;
   grid-template-columns: 1.5fr 1fr;

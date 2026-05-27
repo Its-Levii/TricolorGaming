@@ -1,7 +1,19 @@
 let tarjetaCliente = null
+let todosClientes = []
+
+function cargarTodosClientes() {
+  const data = localStorage.getItem('tricolor_todos_clientes')
+  if (data) {
+    try { todosClientes = JSON.parse(data) } catch { todosClientes = [] }
+  }
+}
+
+function guardarTodosClientes() {
+  localStorage.setItem('tricolor_todos_clientes', JSON.stringify(todosClientes))
+}
 
 function cargarTarjeta() {
-  const data = localStorage.getItem('tricolor_tarjeta')
+  const data = localStorage.getItem('tricolor_tarjeta_activa')
   if (data) {
     try {
       tarjetaCliente = JSON.parse(data)
@@ -10,10 +22,20 @@ function cargarTarjeta() {
 }
 
 function guardarTarjeta() {
-  localStorage.setItem('tricolor_tarjeta', JSON.stringify(tarjetaCliente))
+  localStorage.setItem('tricolor_tarjeta_activa', JSON.stringify(tarjetaCliente))
+  if (tarjetaCliente) {
+    const idx = todosClientes.findIndex(c => c.documento === tarjetaCliente.documento)
+    if (idx >= 0) {
+      todosClientes[idx] = tarjetaCliente
+    }
+    guardarTodosClientes()
+  }
 }
 
 function registrarTarjeta(datos) {
+  const existente = todosClientes.find(c => c.documento === datos.documento)
+  if (existente) return null
+
   tarjetaCliente = {
     id: Date.now(),
     fechaRegistro: new Date().toISOString(),
@@ -23,10 +45,19 @@ function registrarTarjeta(datos) {
     email: datos.email,
     telefono: datos.telefono,
     fechaNacimiento: datos.fechaNacimiento,
-    puntos: Math.floor(Math.random() * 500) + 100,
+    puntos: 0,
     puntosGastados: 0,
     transacciones: []
   }
+  todosClientes.push(tarjetaCliente)
+  guardarTarjeta()
+  return tarjetaCliente
+}
+
+function iniciarSesionTarjeta(documento) {
+  const cliente = todosClientes.find(c => c.documento === documento)
+  if (!cliente) return null
+  tarjetaCliente = cliente
   guardarTarjeta()
   return tarjetaCliente
 }
@@ -67,7 +98,8 @@ function getTarjetaCliente() {
 
 function cerrarSesionTarjeta() {
   tarjetaCliente = null
-  localStorage.removeItem('tricolor_tarjeta')
+  localStorage.removeItem('tricolor_tarjeta_activa')
 }
 
+cargarTodosClientes()
 cargarTarjeta()

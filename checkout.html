@@ -109,7 +109,7 @@
                       <small>Pago simulado</small>
                     </span>
                   </label>
-                  <label class="form-option">
+                  <label class="form-option" id="pago-efectivo">
                     <input type="radio" name="metodo-pago" value="efectivo">
                     <span class="option-content">
                       <strong>Efectivo (contraentrega)</strong>
@@ -166,6 +166,38 @@
       `
     }
 
+    document.body.insertAdjacentHTML('beforeend', `
+      <div id="tarjeta-modal" class="modal-overlay">
+        <div class="modal-content">
+          <button class="modal-close" onclick="cerrarModalTarjeta()">${ICONS.close}</button>
+          <h2>¿Tienes tarjeta de cliente?</h2>
+          <p>Inicia sesión o regístrate para acumular puntos con esta compra.</p>
+          <div class="modal-login-form">
+            <input type="text" id="modal-documento" placeholder="Número de documento" class="form-input">
+            <button class="btn btn-primary btn-block" onclick="loginEnCheckout()">Iniciar sesión</button>
+          </div>
+          <p id="modal-login-error" style="color:var(--rojo);font-size:0.85rem;margin-top:0.5rem"></p>
+          <div class="modal-actions">
+            <a href="tarjeta-cliente.html" class="btn btn-outline">Registrarme</a>
+            <button class="btn btn-outline" onclick="continuarSinTarjeta()">No, gracias</button>
+          </div>
+        </div>
+      </div>
+    `)
+
+    document.querySelectorAll('input[name="tipo-envio"]').forEach(el => {
+      el.addEventListener('change', function() {
+        const efectivo = document.getElementById('pago-efectivo')
+        if (this.value === 'recoge') {
+          efectivo.style.display = 'none'
+          document.querySelector('input[name="metodo-pago"][value="efectivo"]').checked = false
+          document.querySelector('input[name="metodo-pago"][value="tarjeta"]').checked = true
+        } else {
+          efectivo.style.display = ''
+        }
+      })
+    })
+
     function togglePuntos(checkbox) {
       document.getElementById('puntos-group').style.display = checkbox.checked ? 'block' : 'none'
     }
@@ -188,6 +220,12 @@
         return
       }
 
+      if (!getTarjetaCliente()) {
+        document.getElementById('tarjeta-modal').classList.add('open')
+        window._checkoutData = { nombres, apellidos, documento, email, telefono, direccion, ciudad, departamento, tipoEnvio, metodoPago, notas }
+        return
+      }
+
       let puntosCanjeados = 0
       const usarPuntos = document.getElementById('usar-puntos')?.checked || false
       if (usarPuntos) {
@@ -199,6 +237,30 @@
       if (pedido) {
         window.location.href = 'confirmacion.html?id=' + pedido.id
       }
+    }
+
+    function cerrarModalTarjeta() {
+      document.getElementById('tarjeta-modal').classList.remove('open')
+    }
+
+    function continuarSinTarjeta() {
+      cerrarModalTarjeta()
+      const d = window._checkoutData
+      if (!d) return
+      const pedido = procesarPedido(d)
+      if (pedido) window.location.href = 'confirmacion.html?id=' + pedido.id
+    }
+
+    function loginEnCheckout() {
+      const doc = document.getElementById('modal-documento').value.trim()
+      if (!doc) { alert('Ingresa tu número de documento.'); return }
+      const t = iniciarSesionTarjeta(doc)
+      if (!t) {
+        document.getElementById('modal-login-error').textContent = 'No encontrado. Regístrate primero.'
+        return
+      }
+      cerrarModalTarjeta()
+      location.reload()
     }
   </script>
 </body>

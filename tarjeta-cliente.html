@@ -81,49 +81,72 @@
         <section class="section">
           <div class="container form-container">
             <h1 class="page-title">Tarjeta de Cliente TricolorGaming</h1>
-            <p class="page-desc">Regístrate y acumula puntos con cada compra. 1 punto por cada $1,000 COP gastados.</p>
+            <p class="page-desc">Acumula puntos con cada compra. 1 punto por cada $1,000 COP gastados.</p>
             <div class="beneficios-tarjeta">
               <div class="beneficio"><span class="beneficio-icon">${ICONS.points}</span><h3>Acumula puntos</h3><p>Gana puntos en cada compra</p></div>
               <div class="beneficio"><span class="beneficio-icon">${ICONS.redeem}</span><h3>Canjea puntos</h3><p>1 punto = $50 COP de descuento</p></div>
               <div class="beneficio"><span class="beneficio-icon">${ICONS.exclusive}</span><h3>Beneficios exclusivos</h3><p>Ofertas especiales para miembros</p></div>
             </div>
-            <form id="tarjeta-form" class="tarjeta-form">
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="t-nombres">Nombres *</label>
-                  <input type="text" id="t-nombres" required>
+            <div class="tabs-tarjeta">
+              <button class="tab-btn active" onclick="mostrarTab('registro')" id="tab-registro-btn">Registrarse</button>
+              <button class="tab-btn" onclick="mostrarTab('login')" id="tab-login-btn">Iniciar sesión</button>
+            </div>
+            <div id="tab-registro">
+              <form id="tarjeta-form" class="tarjeta-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="t-nombres">Nombres *</label>
+                    <input type="text" id="t-nombres" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="t-apellidos">Apellidos *</label>
+                    <input type="text" id="t-apellidos" required>
+                  </div>
                 </div>
-                <div class="form-group">
-                  <label for="t-apellidos">Apellidos *</label>
-                  <input type="text" id="t-apellidos" required>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="t-documento">Documento *</label>
+                    <input type="text" id="t-documento" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="t-telefono">Teléfono *</label>
+                    <input type="tel" id="t-telefono" required>
+                  </div>
                 </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="t-documento">Documento *</label>
-                  <input type="text" id="t-documento" required>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="t-email">Email *</label>
+                    <input type="email" id="t-email" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="t-fecha-nac">Fecha de nacimiento *</label>
+                    <input type="date" id="t-fecha-nac" required>
+                  </div>
                 </div>
+                <button type="button" class="btn btn-primary btn-block btn-lg" onclick="registrar()">Registrarme</button>
+              </form>
+            </div>
+            <div id="tab-login" style="display:none">
+              <form id="login-form" class="tarjeta-form">
+                <p style="margin-bottom:1rem">Ingresa tu número de documento para acceder a tu tarjeta de cliente.</p>
                 <div class="form-group">
-                  <label for="t-telefono">Teléfono *</label>
-                  <input type="tel" id="t-telefono" required>
+                  <label for="l-documento">Número de documento *</label>
+                  <input type="text" id="l-documento" required>
                 </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="t-email">Email *</label>
-                  <input type="email" id="t-email" required>
-                </div>
-                <div class="form-group">
-                  <label for="t-fecha-nac">Fecha de nacimiento *</label>
-                  <input type="date" id="t-fecha-nac" required>
-                </div>
-              </div>
-              <button type="button" class="btn btn-primary btn-block btn-lg" onclick="registrar()">Registrarme</button>
-            </form>
+                <button type="button" class="btn btn-primary btn-block btn-lg" onclick="iniciarSesion()">Iniciar sesión</button>
+              </form>
+            </div>
             <div id="tarjeta-resultado"></div>
           </div>
         </section>
       `
+    }
+
+    function mostrarTab(tab) {
+      document.getElementById('tab-registro').style.display = tab === 'registro' ? 'block' : 'none'
+      document.getElementById('tab-login').style.display = tab === 'login' ? 'block' : 'none'
+      document.getElementById('tab-registro-btn').classList.toggle('active', tab === 'registro')
+      document.getElementById('tab-login-btn').classList.toggle('active', tab === 'login')
     }
 
     function registrar() {
@@ -141,19 +164,48 @@
 
       const t = registrarTarjeta({ nombres, apellidos, documento, email, telefono, fechaNacimiento })
 
+      if (!t) {
+        document.getElementById('tarjeta-resultado').innerHTML = `
+          <div class="alert alert-error">
+            <p>Ya existe una tarjeta registrada con el documento <strong>${documento}</strong>. <a href="#" onclick="mostrarTab('login');document.getElementById('l-documento').value='${documento}';return false">Inicia sesión aquí</a>.</p>
+          </div>
+        `
+        return
+      }
+
       document.getElementById('tarjeta-resultado').innerHTML = `
         <div class="credit-aprobado">
           <span class="aprobado-icon">${ICONS.check}</span>
           <h2>¡Registro exitoso!</h2>
           <p>Bienvenido, ${t.nombres}.</p>
           <div class="aprobado-detalles">
-            <p><strong>Puntos de bienvenida:</strong> ${t.puntos} pts</p>
-            <p><strong>Valor inicial:</strong> ${formatoPrecio(t.puntos * 50)}</p>
+            <p><strong>Puntos acumulados:</strong> ${t.puntos} pts</p>
           </div>
           <button class="btn btn-primary" onclick="location.reload()">Ver mi tarjeta</button>
         </div>
       `
       document.getElementById('tarjeta-form').reset()
+    }
+
+    function iniciarSesion() {
+      const documento = document.getElementById('l-documento').value.trim()
+      if (!documento) {
+        alert('Ingresa tu número de documento.')
+        return
+      }
+      const t = iniciarSesionTarjeta(documento)
+      if (!t) {
+        document.getElementById('tarjeta-resultado').innerHTML = `
+          <div class="credit-rechazado">
+            <span class="rechazado-icon">${ICONS.close}</span>
+            <h2>No encontrado</h2>
+            <p>No hay ninguna tarjeta registrada con el documento <strong>${documento}</strong>.</p>
+            <p><a href="#" onclick="mostrarTab('registro');return false">Regístrate aquí</a> para obtener tu tarjeta.</p>
+          </div>
+        `
+        return
+      }
+      location.reload()
     }
   </script>
 </body>
