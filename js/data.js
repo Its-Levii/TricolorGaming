@@ -588,13 +588,13 @@ const PRODUCTOS = [
   {
     id: 50, nombre: 'Tarjeta de Regalo Steam', slug: 'tarjeta-regalo-steam',
     descripcion: 'Tarjeta de regalo digital para Steam. Canjea por juegos, DLCs y más en la plataforma de Valve.',
-    precioBase: 40000, tipo: 'variable', categoria: 'tarjetas-regalo', subcategoria: 'steam',
+    precioBase: 36500, tipo: 'variable', categoria: 'tarjetas-regalo', subcategoria: 'steam',
     marca: 'valve', estado: 'inventario', stock: null,
     imagen: 'assets/images/Tarjeta regalo steam 10usd.jpg',
     variantes: [
-      { nombre: '$10 USD (40,000 COP)', precio: 40000, imagen: 'assets/images/Tarjeta regalo steam 10usd.jpg' },
-      { nombre: '$20 USD (80,000 COP)', precio: 80000, imagen: 'assets/images/Tarjeta regalo steam 20usd.jpg' },
-      { nombre: '$50 USD (200,000 COP)', precio: 200000, imagen: 'assets/images/Tarjeta regalo steam 50usd.jpg' }
+      { nombre: '$10 USD (36,500 COP)', precio: 36500, imagen: 'assets/images/Tarjeta regalo steam 10usd.jpg' },
+      { nombre: '$20 USD (73,000 COP)', precio: 73000, imagen: 'assets/images/Tarjeta regalo steam 20usd.jpg' },
+      { nombre: '$50 USD (182,500 COP)', precio: 182500, imagen: 'assets/images/Tarjeta regalo steam 50usd.jpg' }
     ],
     tags: ['juegos', 'ofertas'], digital: true, destacado: true,
     rating: 5, resenas: 201
@@ -602,13 +602,13 @@ const PRODUCTOS = [
   {
     id: 51, nombre: 'Tarjeta de Regalo Xbox', slug: 'tarjeta-regalo-xbox',
     descripcion: 'Tarjeta de regalo digital para Xbox. Canjea por juegos, Game Pass, y contenido en Microsoft Store.',
-    precioBase: 40000, tipo: 'variable', categoria: 'tarjetas-regalo', subcategoria: 'xbox',
+    precioBase: 36500, tipo: 'variable', categoria: 'tarjetas-regalo', subcategoria: 'xbox',
     marca: 'microsoft', estado: 'inventario', stock: null,
     imagen: 'assets/images/Tarjeta regalo xbox 10usd.jpg',
     variantes: [
-      { nombre: '$10 USD (40,000 COP)', precio: 40000, imagen: 'assets/images/Tarjeta regalo xbox 10usd.jpg' },
-      { nombre: '$25 USD (100,000 COP)', precio: 100000, imagen: 'assets/images/Tarjeta regalo xbox 25usd.jpg' },
-      { nombre: '$50 USD (200,000 COP)', precio: 200000, imagen: 'assets/images/Tarjeta regalo xbox 50usd.jpg' }
+      { nombre: '$10 USD (36,500 COP)', precio: 36500, imagen: 'assets/images/Tarjeta regalo xbox 10usd.jpg' },
+      { nombre: '$25 USD (91,250 COP)', precio: 91250, imagen: 'assets/images/Tarjeta regalo xbox 25usd.jpg' },
+      { nombre: '$50 USD (182,500 COP)', precio: 182500, imagen: 'assets/images/Tarjeta regalo xbox 50usd.jpg' }
     ],
     tags: ['juegos', 'ofertas'], digital: true, destacado: true,
     rating: 4.5, resenas: 167
@@ -616,13 +616,13 @@ const PRODUCTOS = [
   {
     id: 52, nombre: 'Tarjeta de Regalo PlayStation', slug: 'tarjeta-regalo-playstation',
     descripcion: 'Tarjeta de regalo digital para PlayStation Network. Compra juegos, DLCs y suscripciones.',
-    precioBase: 40000, tipo: 'variable', categoria: 'tarjetas-regalo', subcategoria: 'steam',
+    precioBase: 36500, tipo: 'variable', categoria: 'tarjetas-regalo', subcategoria: 'steam',
     marca: 'sony', estado: 'inventario', stock: null,
     imagen: 'assets/images/Tarjeta regalo playstation 10usd.jpg',
     variantes: [
-      { nombre: '$10 USD (40,000 COP)', precio: 40000, imagen: 'assets/images/Tarjeta regalo playstation 10usd.jpg' },
-      { nombre: '$25 USD (100,000 COP)', precio: 100000, imagen: 'assets/images/Tarjeta regalo playstation 25usd.jpg' },
-      { nombre: '$50 USD (200,000 COP)', precio: 200000, imagen: 'assets/images/Tarjeta regalo playstation 50usd.jpg' }
+      { nombre: '$10 USD (36,500 COP)', precio: 36500, imagen: 'assets/images/Tarjeta regalo playstation 10usd.jpg' },
+      { nombre: '$25 USD (91,250 COP)', precio: 91250, imagen: 'assets/images/Tarjeta regalo playstation 25usd.jpg' },
+      { nombre: '$50 USD (182,500 COP)', precio: 182500, imagen: 'assets/images/Tarjeta regalo playstation 50usd.jpg' }
     ],
     tags: ['juegos', 'ofertas'], digital: true, destacado: false,
     rating: 3, resenas: 56
