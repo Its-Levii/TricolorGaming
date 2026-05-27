@@ -54,8 +54,4 @@ function solicitarCredito(datos) {
   return solicitud
 }
 
-function getSolicitudesCredito() {
-  return solicitudesCredito
-}
-
 cargarSolicitudes()

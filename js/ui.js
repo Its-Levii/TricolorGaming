@@ -76,6 +76,3 @@ function getParam(name) {
   return params.get(name)
 }
 
-function goTo(url) {
-  window.location.href = url
-}
