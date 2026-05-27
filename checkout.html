@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — TricolorGaming</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A0A14'/%3E%3Cpath d='M10 14h4m4 0h4M15 11v6M11 11v6' stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Crect x='4' y='10' width='24' height='12' rx='5' stroke='%23FFD700' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div id="header"></div>
+  <main id="main-content"></main>
+  <div id="footer"></div>
+  <script src="js/icons.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/checkout.js"></script>
+  <script src="js/client-card.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    includeHeader()
+    includeFooter()
+
+    const main = document.getElementById('main-content')
+
+    if (carrito.length === 0) {
+      window.location.href = 'carrito.html'
+    } else {
+      const tarjeta = getTarjetaCliente()
+
+      main.innerHTML = `
+        <div class="breadcrumbs"><a href="index.html">Inicio</a> <span>/</span> <a href="carrito.html">Carrito</a> <span>/</span> <span>Checkout</span></div>
+        <section class="section">
+          <div class="container">
+            <h1 class="page-title">Checkout</h1>
+            <form id="checkout-form" class="checkout-layout">
+              <div class="checkout-form">
+                <h2>Información personal</h2>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="check-nombres">Nombres *</label>
+                    <input type="text" id="check-nombres" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="check-apellidos">Apellidos *</label>
+                    <input type="text" id="check-apellidos" required>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="check-documento">Documento *</label>
+                    <input type="text" id="check-documento" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="check-telefono">Teléfono *</label>
+                    <input type="tel" id="check-telefono" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="check-email">Email *</label>
+                  <input type="email" id="check-email" required>
+                </div>
+                <h2>Dirección de envío</h2>
+                <div class="form-group">
+                  <label for="check-direccion">Dirección *</label>
+                  <input type="text" id="check-direccion" required>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="check-ciudad">Ciudad *</label>
+                    <input type="text" id="check-ciudad" value="Santa Marta" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="check-departamento">Departamento *</label>
+                    <input type="text" id="check-departamento" value="Magdalena" required>
+                  </div>
+                </div>
+                <h2>Tipo de envío</h2>
+                <div class="form-options">
+                  <label class="form-option">
+                    <input type="radio" name="tipo-envio" value="domicilio" checked>
+                    <span class="option-content">
+                      <strong>Domicilio</strong>
+                      <small>$15,000 COP - Recibe en tu casa</small>
+                    </span>
+                  </label>
+                  <label class="form-option">
+                    <input type="radio" name="tipo-envio" value="recoge">
+                    <span class="option-content">
+                      <strong>Recoger en tienda</strong>
+                      <small>Gratis - Recoge en Santa Marta</small>
+                    </span>
+                  </label>
+                </div>
+                <h2>Método de pago</h2>
+                <div class="form-options">
+                  <label class="form-option">
+                    <input type="radio" name="metodo-pago" value="tarjeta" checked>
+                    <span class="option-content">
+                      <strong>Tarjeta crédito/débito</strong>
+                      <small>Pago simulado</small>
+                    </span>
+                  </label>
+                  <label class="form-option">
+                    <input type="radio" name="metodo-pago" value="transferencia">
+                    <span class="option-content">
+                      <strong>Transferencia bancaria</strong>
+                      <small>Pago simulado</small>
+                    </span>
+                  </label>
+                  <label class="form-option">
+                    <input type="radio" name="metodo-pago" value="efectivo">
+                    <span class="option-content">
+                      <strong>Efectivo (contraentrega)</strong>
+                      <small>Paga al recibir</small>
+                    </span>
+                  </label>
+                </div>
+                ${tarjeta ? `
+                  <h2>Tarjeta de Cliente</h2>
+                  <div class="form-group">
+                    <label class="form-checkbox">
+                      <input type="checkbox" id="usar-puntos" onchange="togglePuntos(this)">
+                      Usar mis puntos (${tarjeta.puntos} pts = ${formatoPrecio(tarjeta.puntos * 50)})
+                    </label>
+                  </div>
+                  <div class="form-group" id="puntos-group" style="display:none">
+                    <label for="puntos-usar">Puntos a canjear</label>
+                    <input type="number" id="puntos-usar" min="0" max="${tarjeta.puntos}" value="0">
+                    <small>${tarjeta.puntos} puntos disponibles (1 punto = $50 COP)</small>
+                  </div>
+                ` : ''}
+                <div class="form-group">
+                  <label for="check-notas">Notas del pedido (opcional)</label>
+                  <textarea id="check-notas" rows="3" placeholder="Ej: Déjalo con el portero..."></textarea>
+                </div>
+              </div>
+              <div class="checkout-resumen">
+                <h2>Resumen</h2>
+                ${carrito.map(item => `
+                  <div class="resumen-item">
+                    <span class="resumen-item-nombre">${item.nombre}${item.nombreVariante ? ' (' + item.nombreVariante + ')' : ''} x ${item.cantidad}</span>
+                    <span class="resumen-item-precio">${formatoPrecio(item.precio * item.cantidad)}</span>
+                  </div>
+                `).join('')}
+                <div class="resumen-divider"></div>
+                <div class="resumen-line">
+                  <span>Subtotal</span>
+                  <span>${formatoPrecio(getTotalCarrito())}</span>
+                </div>
+                <div class="resumen-line" id="resumen-envio">
+                  <span>Envío</span>
+                  <span>$15,000 COP</span>
+                </div>
+                <div class="resumen-divider"></div>
+                <div class="resumen-line resumen-total">
+                  <span>Total</span>
+                  <span id="resumen-total">${formatoPrecio(getTotalCarrito() + 15000)}</span>
+                </div>
+                <button type="button" class="btn btn-primary btn-block btn-lg" onclick="procesarCheckout()">Confirmar pedido</button>
+              </div>
+            </form>
+          </div>
+        </section>
+      `
+    }
+
+    function togglePuntos(checkbox) {
+      document.getElementById('puntos-group').style.display = checkbox.checked ? 'block' : 'none'
+    }
+
+    function procesarCheckout() {
+      const nombres = document.getElementById('check-nombres').value.trim()
+      const apellidos = document.getElementById('check-apellidos').value.trim()
+      const documento = document.getElementById('check-documento').value.trim()
+      const email = document.getElementById('check-email').value.trim()
+      const telefono = document.getElementById('check-telefono').value.trim()
+      const direccion = document.getElementById('check-direccion').value.trim()
+      const ciudad = document.getElementById('check-ciudad').value.trim()
+      const departamento = document.getElementById('check-departamento').value.trim()
+      const tipoEnvio = document.querySelector('input[name="tipo-envio"]:checked')?.value || 'domicilio'
+      const metodoPago = document.querySelector('input[name="metodo-pago"]:checked')?.value || 'tarjeta'
+      const notas = document.getElementById('check-notas')?.value.trim() || ''
+
+      if (!nombres || !apellidos || !documento || !email || !telefono || !direccion || !ciudad || !departamento) {
+        alert('Por favor completa todos los campos obligatorios.')
+        return
+      }
+
+      let puntosCanjeados = 0
+      const usarPuntos = document.getElementById('usar-puntos')?.checked || false
+      if (usarPuntos) {
+        puntosCanjeados = parseInt(document.getElementById('puntos-usar')?.value) || 0
+      }
+
+      const pedido = procesarPedido({ nombres, apellidos, documento, email, telefono, direccion, ciudad, departamento, tipoEnvio, metodoPago, notas, usarPuntos, puntosCanjeados })
+
+      if (pedido) {
+        window.location.href = 'confirmacion.html?id=' + pedido.id
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda — TricolorGaming</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A0A14'/%3E%3Cpath d='M10 14h4m4 0h4M15 11v6M11 11v6' stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Crect x='4' y='10' width='24' height='12' rx='5' stroke='%23FFD700' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div id="header"></div>
+  <main>
+    <div class="breadcrumbs">
+      <a href="index.html">Inicio</a> <span>/</span> <span id="breadcrumb-text">Tienda</span>
+    </div>
+    <section class="section">
+      <div class="container">
+        <div class="tienda-header">
+          <div>
+            <h1 class="page-title" id="page-title">Todos los productos</h1>
+            <p class="page-desc" id="page-desc">Explora nuestro catálogo completo de productos gaming.</p>
+          </div>
+          <span class="product-count" id="product-count"></span>
+        </div>
+        <div id="categoria-nav"></div>
+        <div id="subcategoria-nav"></div>
+        <div class="productos-grid" id="productos-grid"></div>
+      </div>
+    </section>
+  </main>
+  <div id="footer"></div>
+  <script src="js/icons.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    includeHeader()
+    includeFooter()
+
+    const q = getParam('q')
+    const cat = getParam('cat')
+    const sub = getParam('sub')
+    const marca = getParam('marca')
+    const tag = getParam('tag')
+
+    let productos = [...PRODUCTOS]
+    let titulo = 'Todos los productos'
+    let desc = 'Explora nuestro catálogo completo de productos gaming.'
+    let breadExtra = ''
+
+    if (q) {
+      const qLower = q.toLowerCase()
+      productos = productos.filter(p =>
+        p.nombre.toLowerCase().includes(qLower) ||
+        p.descripcion.toLowerCase().includes(qLower) ||
+        p.tags.some(t => t.includes(qLower))
+      )
+      titulo = `Resultados para "${q}"`
+      desc = productos.length > 0
+        ? `Encontramos ${productos.length} producto(s) para tu búsqueda.`
+        : 'No encontramos productos para tu búsqueda.'
+      breadExtra = q
+    }
+
+    if (cat) {
+      const categoria = CATEGORIAS.find(c => c.id === cat)
+      if (categoria) {
+        titulo = categoria.nombre
+        desc = `Explora nuestra categoría de ${categoria.nombre.toLowerCase()}.`
+        breadExtra = categoria.nombre
+        if (sub) {
+          const subc = categoria.subcategorias.find(s => s.id === sub)
+          if (subc) {
+            titulo = subc.nombre
+            desc = `Explora nuestra sección de ${subc.nombre.toLowerCase()}.`
+            breadExtra += ` / ${subc.nombre}`
+            productos = productos.filter(p => p.subcategoria === sub)
+          }
+        } else {
+          productos = productos.filter(p => p.categoria === cat)
+        }
+      }
+    }
+
+    if (marca) {
+      const m = MARCAS.find(mr => mr.id === marca)
+      if (m) {
+        titulo = `Marca: ${m.nombre}`
+        desc = `Todos los productos de ${m.nombre}.`
+        breadExtra = m.nombre
+      }
+      productos = productos.filter(p => p.marca === marca)
+    }
+
+    if (tag) {
+      const t = TAGS.find(tg => tg.id === tag)
+      if (t) {
+        titulo = `Etiqueta: ${t.nombre}`
+        desc = `Productos etiquetados con "${t.nombre}".`
+      }
+      productos = productos.filter(p => p.tags.includes(tag))
+    }
+
+    document.getElementById('breadcrumb-text').textContent = breadExtra || 'Tienda'
+    document.getElementById('page-title').textContent = titulo
+    document.getElementById('page-desc').textContent = desc
+    document.getElementById('product-count').textContent = productos.length + ' producto(s)'
+
+    if (!q && !cat && !marca && !tag) {
+      const catNav = document.getElementById('categoria-nav')
+      catNav.innerHTML = `
+        <div class="categoria-nav">
+          ${CATEGORIAS.map(c => `
+            <a href="tienda.html?cat=${c.id}" class="cat-nav-item">
+              <span>${c.icono}</span>
+              <span>${c.nombre}</span>
+            </a>
+          `).join('')}
+        </div>
+      `
+    }
+
+    if (cat && !sub && !q && !marca && !tag) {
+      const categoria = CATEGORIAS.find(c => c.id === cat)
+      if (categoria) {
+        const subNav = document.getElementById('subcategoria-nav')
+        subNav.innerHTML = `
+          <div class="subcategoria-nav">
+            ${categoria.subcategorias.map(s => `
+              <a href="tienda.html?cat=${cat}&sub=${s.id}" class="subcat-nav-item">${s.nombre}</a>
+            `).join('')}
+          </div>
+        `
+      }
+    }
+
+    const grid = document.getElementById('productos-grid')
+    if (productos.length > 0) {
+      grid.innerHTML = productos.map(renderProductCard).join('')
+    } else {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column: 1/-1">
+          <span class="empty-icon">${ICONS.search}</span>
+          <h3>No encontramos productos</h3>
+          <p>Intenta con otros filtros o <a href="tienda.html">explora todo el catálogo</a>.</p>
+        </div>
+      `
+    }
+  </script>
+</body>
+</html>

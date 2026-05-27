@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitud de Crédito — TricolorGaming</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A0A14'/%3E%3Cpath d='M10 14h4m4 0h4M15 11v6M11 11v6' stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Crect x='4' y='10' width='24' height='12' rx='5' stroke='%23FFD700' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div id="header"></div>
+  <main id="main-content"></main>
+  <div id="footer"></div>
+  <script src="js/icons.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/credit.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    includeHeader()
+    includeFooter()
+
+    const main = document.getElementById('main-content')
+    main.innerHTML = `
+      <div class="breadcrumbs"><a href="index.html">Inicio</a> <span>/</span> <span>Solicitud de crédito</span></div>
+      <section class="section">
+        <div class="container form-container">
+          <h1 class="page-title">Solicitud de crédito</h1>
+          <p class="page-desc">Simula y solicita tu crédito para comprar productos gaming. Aprobación inmediata.</p>
+          <div class="credit-calculator">
+            <div class="credit-info">
+              <h3>Condiciones</h3>
+              <ul>
+                <li>Tasa de interés: <strong>18% anual</strong></li>
+                <li>Plazos: <strong>6, 12, 18 o 24 meses</strong></li>
+                <li>Monto máximo: <strong>$5,000,000 COP</strong></li>
+                <li>Aprobación: <strong>Inmediata</strong></li>
+              </ul>
+            </div>
+            <form id="credit-form" class="credit-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="cred-nombres">Nombres *</label>
+                  <input type="text" id="cred-nombres" required>
+                </div>
+                <div class="form-group">
+                  <label for="cred-apellidos">Apellidos *</label>
+                  <input type="text" id="cred-apellidos" required>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="cred-documento">Documento *</label>
+                  <input type="text" id="cred-documento" required>
+                </div>
+                <div class="form-group">
+                  <label for="cred-email">Email *</label>
+                  <input type="email" id="cred-email" required>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="cred-telefono">Teléfono *</label>
+                  <input type="tel" id="cred-telefono" required>
+                </div>
+                <div class="form-group">
+                  <label for="cred-ingresos">Ingresos mensuales *</label>
+                  <input type="number" id="cred-ingresos" min="1000000" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="cred-direccion">Dirección *</label>
+                <input type="text" id="cred-direccion" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="cred-monto">Monto a solicitar *</label>
+                  <input type="number" id="cred-monto" min="100000" max="5000000" value="1000000" required>
+                </div>
+                <div class="form-group">
+                  <label for="cred-plazo">Plazo (meses) *</label>
+                  <select id="cred-plazo" required>
+                    <option value="6">6 meses</option>
+                    <option value="12" selected>12 meses</option>
+                    <option value="18">18 meses</option>
+                    <option value="24">24 meses</option>
+                  </select>
+                </div>
+              </div>
+              <div id="credit-simulacion" class="credit-simulacion"></div>
+              <button type="button" class="btn btn-primary btn-block btn-lg" onclick="procesarCredito()">Solicitar crédito</button>
+            </form>
+          </div>
+          <div id="credit-resultado"></div>
+        </div>
+      </section>
+    `
+
+    document.getElementById('cred-monto').addEventListener('input', actualizarSimulacion)
+    document.getElementById('cred-plazo').addEventListener('change', actualizarSimulacion)
+
+    function actualizarSimulacion() {
+      const monto = parseInt(document.getElementById('cred-monto')?.value)
+      const plazo = parseInt(document.getElementById('cred-plazo')?.value)
+      const div = document.getElementById('credit-simulacion')
+      if (monto && plazo && monto >= 100000) {
+        const sim = simularCredito(monto, plazo)
+        div.innerHTML = `
+          <div class="simulacion-resultados">
+            <h3>Simulación</h3>
+            <div class="simulacion-grid">
+              <div class="simulacion-item"><span class="sim-label">Monto</span><span class="sim-value">${formatoPrecio(sim.monto)}</span></div>
+              <div class="simulacion-item"><span class="sim-label">Plazo</span><span class="sim-value">${sim.plazo} meses</span></div>
+              <div class="simulacion-item"><span class="sim-label">Cuota mensual</span><span class="sim-value">${formatoPrecio(sim.pagoMensual)}</span></div>
+              <div class="simulacion-item"><span class="sim-label">Total a pagar</span><span class="sim-value">${formatoPrecio(sim.totalPagar)}</span></div>
+              <div class="simulacion-item"><span class="sim-label">Interés total</span><span class="sim-value">${formatoPrecio(sim.interesTotal)}</span></div>
+              <div class="simulacion-item"><span class="sim-label">Tasa anual</span><span class="sim-value">${sim.tasaAnual}%</span></div>
+            </div>
+          </div>
+        `
+      } else {
+        div.innerHTML = ''
+      }
+    }
+
+    function procesarCredito() {
+      const nombres = document.getElementById('cred-nombres').value.trim()
+      const apellidos = document.getElementById('cred-apellidos').value.trim()
+      const documento = document.getElementById('cred-documento').value.trim()
+      const email = document.getElementById('cred-email').value.trim()
+      const telefono = document.getElementById('cred-telefono').value.trim()
+      const direccion = document.getElementById('cred-direccion').value.trim()
+      const ingresos = parseInt(document.getElementById('cred-ingresos').value)
+      const monto = parseInt(document.getElementById('cred-monto').value)
+      const plazo = parseInt(document.getElementById('cred-plazo').value)
+
+      if (!nombres || !apellidos || !documento || !email || !telefono || !direccion) {
+        alert('Completa todos los campos obligatorios.')
+        return
+      }
+
+      const resultado = solicitarCredito({ nombres, apellidos, documento, email, telefono, direccion, ingresos, monto, plazo })
+
+      document.getElementById('credit-resultado').innerHTML = `
+        <div class="credit-aprobado">
+          <span class="aprobado-icon">${ICONS.check}</span>
+          <h2>¡Crédito aprobado!</h2>
+          <p>Tu solicitud de crédito ha sido aprobada exitosamente.</p>
+          <div class="aprobado-detalles">
+            <p><strong>Monto:</strong> ${formatoPrecio(resultado.simulacion.monto)}</p>
+            <p><strong>Plazo:</strong> ${resultado.simulacion.plazo} meses</p>
+            <p><strong>Cuota mensual:</strong> ${formatoPrecio(resultado.simulacion.pagoMensual)}</p>
+            <p><strong>Total a pagar:</strong> ${formatoPrecio(resultado.simulacion.totalPagar)}</p>
+            <p><strong>ID Solicitud:</strong> ${resultado.id}</p>
+          </div>
+          <a href="tienda.html" class="btn btn-primary">Ir a la tienda</a>
+        </div>
+      `
+      document.getElementById('credit-form').reset()
+      document.getElementById('credit-simulacion').innerHTML = ''
+    }
+  </script>
+</body>
+</html>

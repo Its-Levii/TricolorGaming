@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedido Confirmado — TricolorGaming</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A0A14'/%3E%3Cpath d='M10 14h4m4 0h4M15 11v6M11 11v6' stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Crect x='4' y='10' width='24' height='12' rx='5' stroke='%23FFD700' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div id="header"></div>
+  <main id="main-content"></main>
+  <div id="footer"></div>
+  <script src="js/icons.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/checkout.js"></script>
+  <script src="js/client-card.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    includeHeader()
+    includeFooter()
+
+    const id = getParam('id')
+    const pedido = id ? getPedido(id) : (pedidos.length > 0 ? pedidos[pedidos.length - 1] : null)
+
+    const main = document.getElementById('main-content')
+
+    if (!pedido) {
+      main.innerHTML = `
+        <section class="section">
+          <div class="container">
+            <div class="empty-state">
+              <h2>No encontramos tu pedido</h2>
+              <a href="tienda.html" class="btn btn-primary">Ir a la tienda</a>
+            </div>
+          </div>
+        </section>
+      `
+    } else {
+      main.innerHTML = `
+        <section class="section">
+          <div class="container confirmacion-container">
+            <div class="confirmacion-header">
+              <span class="confirmacion-icon">${ICONS.check}</span>
+              <h1>¡Pedido confirmado!</h1>
+              <p>Gracias por tu compra, ${pedido.cliente.nombres}. Te hemos enviado un resumen a ${pedido.cliente.email}.</p>
+            </div>
+            <div class="confirmacion-card">
+              <div class="confirmacion-card-header">
+                <span><strong>Pedido:</strong> ${pedido.id}</span>
+                <span class="badge-confirmado">${pedido.estado}</span>
+              </div>
+              <div class="confirmacion-card-body">
+                <p><strong>Fecha:</strong> ${formatearFecha(pedido.fecha)}</p>
+                <p><strong>Método de pago:</strong> ${pedido.metodoPago === 'tarjeta' ? 'Tarjeta crédito/débito' : pedido.metodoPago === 'transferencia' ? 'Transferencia bancaria' : 'Efectivo'}</p>
+                <p><strong>Envío:</strong> ${pedido.tipoEnvio === 'domicilio' ? 'Domicilio' : 'Recoger en tienda'}</p>
+                ${pedido.descuento > 0 ? `<p><strong>Descuento puntos:</strong> -${formatoPrecio(pedido.descuento)}</p>` : ''}
+              </div>
+            </div>
+            <div class="confirmacion-items">
+              <h3>Productos</h3>
+              ${pedido.items.map(item => `
+                <div class="confirmacion-item">
+                  <img src="${item.imagen}" alt="${item.nombre}" loading="lazy">
+                  <div class="confirmacion-item-info">
+                    <span>${item.nombre}${item.nombreVariante ? ' — ' + item.nombreVariante : ''}</span>
+                    <span>× ${item.cantidad}</span>
+                  </div>
+                  <span>${formatoPrecio(item.precio * item.cantidad)}</span>
+                </div>
+              `).join('')}
+            </div>
+            <div class="confirmacion-totales">
+              <div class="confirmacion-line"><span>Subtotal</span><span>${formatoPrecio(pedido.subtotal)}</span></div>
+              <div class="confirmacion-line"><span>Envío</span><span>${formatoPrecio(pedido.envio)}</span></div>
+              ${pedido.descuento > 0 ? `<div class="confirmacion-line"><span>Descuento</span><span>-${formatoPrecio(pedido.descuento)}</span></div>` : ''}
+              <div class="confirmacion-line confirmacion-total"><span>Total</span><span>${formatoPrecio(pedido.total)}</span></div>
+            </div>
+            <div class="confirmacion-actions">
+              <a href="tienda.html" class="btn btn-primary">Seguir comprando</a>
+              <a href="tarjeta-cliente.html" class="btn btn-outline">Mi tarjeta de cliente</a>
+            </div>
+          </div>
+        </section>
+      `
+    }
+  </script>
+</body>
+</html>

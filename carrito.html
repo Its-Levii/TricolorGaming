@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito — TricolorGaming</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A0A14'/%3E%3Cpath d='M10 14h4m4 0h4M15 11v6M11 11v6' stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Crect x='4' y='10' width='24' height='12' rx='5' stroke='%23FFD700' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div id="header"></div>
+  <main id="main-content"></main>
+  <div id="footer"></div>
+  <script src="js/icons.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/checkout.js"></script>
+  <script src="js/client-card.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    includeHeader()
+    includeFooter()
+
+    const main = document.getElementById('main-content')
+
+    if (carrito.length === 0) {
+      main.innerHTML = `
+        <div class="breadcrumbs"><a href="index.html">Inicio</a> <span>/</span> <span>Carrito</span></div>
+        <section class="section">
+          <div class="container">
+            <div class="empty-state">
+              <span class="empty-icon">${ICONS.cart}</span>
+              <h2>Tu carrito está vacío</h2>
+              <p>Agrega productos desde nuestra tienda para empezar a comprar.</p>
+              <a href="tienda.html" class="btn btn-primary">Ir a la tienda</a>
+            </div>
+          </div>
+        </section>
+      `
+    } else {
+      main.innerHTML = `
+        <div class="breadcrumbs"><a href="index.html">Inicio</a> <span>/</span> <span>Carrito</span></div>
+        <section class="section">
+          <div class="container">
+            <h1 class="page-title">Tu Carrito</h1>
+            <div class="carrito-layout">
+              <div class="carrito-items" id="carrito-items"></div>
+              <div class="carrito-resumen">
+                <h3>Resumen del pedido</h3>
+                <div class="resumen-line">
+                  <span>Subtotal (<span id="resumen-cantidad">0</span> items)</span>
+                  <span id="resumen-subtotal">$0 COP</span>
+                </div>
+                <div class="resumen-line">
+                  <span>Envío</span>
+                  <span>Calculado en checkout</span>
+                </div>
+                <div class="resumen-divider"></div>
+                <div class="resumen-line resumen-total">
+                  <span>Total estimado</span>
+                  <span id="resumen-total">$0 COP</span>
+                </div>
+                <a href="checkout.html" class="btn btn-primary btn-block">Proceder al checkout</a>
+                <a href="tienda.html" class="btn btn-outline btn-block">Seguir comprando</a>
+                <button class="btn btn-link btn-block" onclick="limpiarCarrito();location.reload()">Vaciar carrito</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      `
+
+      const itemsContainer = document.getElementById('carrito-items')
+      itemsContainer.innerHTML = carrito.map(item => `
+        <div class="carrito-item">
+          <div class="carrito-item-img">
+            <img src="${item.imagen}" alt="${item.nombre}" loading="lazy">
+          </div>
+          <div class="carrito-item-info">
+            <h3><a href="producto.html?slug=${item.slug}">${item.nombre}</a></h3>
+            ${item.nombreVariante ? `<span class="carrito-item-var">${item.nombreVariante}</span>` : ''}
+            <span class="carrito-item-precio">${formatoPrecio(item.precio)}</span>
+          </div>
+          <div class="carrito-item-cantidad">
+            <button onclick="cambiarCantidadCarrito('${item.key}', ${item.cantidad - 1})">−</button>
+            <span>${item.cantidad}</span>
+            <button onclick="cambiarCantidadCarrito('${item.key}', ${item.cantidad + 1})">+</button>
+          </div>
+          <div class="carrito-item-subtotal">${formatoPrecio(item.precio * item.cantidad)}</div>
+          <button class="carrito-item-remove" onclick="eliminarDelCarrito('${item.key}');location.reload()">${ICONS.close}</button>
+        </div>
+      `).join('')
+
+      document.getElementById('resumen-cantidad').textContent = getCantidadTotalCarrito()
+      document.getElementById('resumen-subtotal').textContent = formatoPrecio(getTotalCarrito())
+      document.getElementById('resumen-total').textContent = formatoPrecio(getTotalCarrito())
+    }
+
+    function cambiarCantidadCarrito(key, nuevaCantidad) {
+      if (nuevaCantidad <= 0) {
+        actualizarCantidad(key, nuevaCantidad)
+        location.reload()
+        return
+      }
+      const item = carrito.find(i => i.key === key)
+      if (item && !item.digital) {
+        const stockActual = getStockActual(item.productoId)
+        const enCarrito = carrito
+          .filter(i => i.productoId === item.productoId && i.key !== key)
+          .reduce((s, i) => s + i.cantidad, 0)
+        if (stockActual !== null && nuevaCantidad + enCarrito > stockActual) {
+          alert('No hay suficiente stock disponible.')
+          return
+        }
+      }
+      actualizarCantidad(key, nuevaCantidad)
+      location.reload()
+    }
+  </script>
+</body>
+</html>

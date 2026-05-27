@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacto — TricolorGaming</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A0A14'/%3E%3Cpath d='M10 14h4m4 0h4M15 11v6M11 11v6' stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Crect x='4' y='10' width='24' height='12' rx='5' stroke='%23FFD700' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div id="header"></div>
+  <main>
+    <div class="breadcrumbs">
+      <a href="index.html">Inicio</a> <span>/</span> <span>Contacto</span>
+    </div>
+    <section class="section">
+      <div class="container form-container">
+        <h1 class="page-title">Contacto</h1>
+        <p class="page-desc">¿Tienes preguntas? Estamos aquí para ayudarte.</p>
+        <div class="contact-grid">
+          <div class="contact-info">
+            <div class="contact-item">
+              <span class="contact-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+              <div>
+                <h3>Dirección</h3>
+                <p>Calle 22 #4-45, Centro Histórico, Santa Marta, Colombia</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+              <div>
+                <h3>Teléfono</h3>
+                <p>+57 (605) 123-4567</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg></span>
+              <div>
+                <h3>Email</h3>
+                <p>contacto@tricolorgaming.com</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+              <div>
+                <h3>Horarios</h3>
+                <p>Lun - Sáb: 9:00 AM - 7:00 PM</p>
+                <p>Dom: 10:00 AM - 4:00 PM</p>
+              </div>
+            </div>
+          </div>
+          <form class="contact-form" onsubmit="alert('Mensaje enviado. Gracias por contactarnos!');this.reset();return false">
+            <div class="form-group">
+              <label for="cont-nombre">Nombre *</label>
+              <input type="text" id="cont-nombre" required>
+            </div>
+            <div class="form-group">
+              <label for="cont-email">Email *</label>
+              <input type="email" id="cont-email" required>
+            </div>
+            <div class="form-group">
+              <label for="cont-asunto">Asunto *</label>
+              <input type="text" id="cont-asunto" required>
+            </div>
+            <div class="form-group">
+              <label for="cont-mensaje">Mensaje *</label>
+              <textarea id="cont-mensaje" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Enviar mensaje</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footer"></div>
+  <script src="js/icons.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    includeHeader()
+    includeFooter()
+  </script>
+</body>
+</html>

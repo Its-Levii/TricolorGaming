@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — TricolorGaming</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A0A14'/%3E%3Cpath d='M10 14h4m4 0h4M15 11v6M11 11v6' stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Crect x='4' y='10' width='24' height='12' rx='5' stroke='%23FFD700' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div id="header"></div>
+  <main>
+    <div class="breadcrumbs">
+      <a href="index.html">Inicio</a> <span>/</span> <span>Blog</span>
+    </div>
+    <section class="section">
+      <div class="container">
+        <h1 class="page-title">Blog TricolorGaming</h1>
+        <p class="page-desc">Noticias, guías y reseñas del mundo gaming.</p>
+        <div class="blog-grid" id="blog-grid"></div>
+      </div>
+    </section>
+  </main>
+  <div id="footer"></div>
+  <script src="js/icons.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    includeHeader()
+    includeFooter()
+
+    const grid = document.getElementById('blog-grid')
+    grid.innerHTML = BLOG.map(entry => `
+      <a href="entrada.html?slug=${entry.slug}" class="blog-card">
+        <div class="blog-card-img">
+          <img src="${entry.imagen}" alt="${entry.titulo}" loading="lazy">
+        </div>
+        <div class="blog-card-body">
+          <div class="blog-meta">
+            <span class="blog-date">${formatearFecha(entry.fecha)}</span>
+            <span class="blog-author">${entry.autor}</span>
+          </div>
+          <h2>${entry.titulo}</h2>
+          <p>${entry.resumen}</p>
+          <div class="blog-tags">${entry.tags.map(t => renderTag(t)).join(' ')}</div>
+          <span class="blog-read-more">Leer artículo completo →</span>
+        </div>
+      </a>
+    `).join('')
+  </script>
+</body>
+</html>

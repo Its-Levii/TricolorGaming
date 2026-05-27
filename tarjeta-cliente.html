@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarjeta de Cliente — TricolorGaming</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A0A14'/%3E%3Cpath d='M10 14h4m4 0h4M15 11v6M11 11v6' stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Crect x='4' y='10' width='24' height='12' rx='5' stroke='%23FFD700' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div id="header"></div>
+  <main id="main-content"></main>
+  <div id="footer"></div>
+  <script src="js/icons.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/checkout.js"></script>
+  <script src="js/client-card.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    includeHeader()
+    includeFooter()
+
+    const main = document.getElementById('main-content')
+    const tarjeta = getTarjetaCliente()
+
+    if (tarjeta) {
+      main.innerHTML = `
+        <div class="breadcrumbs"><a href="index.html">Inicio</a> <span>/</span> <span>Tarjeta de Cliente</span></div>
+        <section class="section">
+          <div class="container form-container">
+            <div class="tarjeta-cliente-card">
+              <div class="tarjeta-header">
+                <h1>Tarjeta de Cliente</h1>
+              </div>
+              <div class="tarjeta-body">
+                <div class="tarjeta-datos">
+                  <p><strong>Nombre:</strong> ${tarjeta.nombres} ${tarjeta.apellidos}</p>
+                  <p><strong>Documento:</strong> ${tarjeta.documento}</p>
+                  <p><strong>Email:</strong> ${tarjeta.email}</p>
+                  <p><strong>Teléfono:</strong> ${tarjeta.telefono}</p>
+                  <p><strong>Registrado desde:</strong> ${formatearFecha(tarjeta.fechaRegistro)}</p>
+                </div>
+                <div class="tarjeta-puntos">
+                  <div class="puntos-circle">
+                    <span class="puntos-numero">${tarjeta.puntos}</span>
+                    <span class="puntos-label">Puntos</span>
+                  </div>
+                  <div class="puntos-info">
+                    <p><strong>Valor de tus puntos:</strong> ${formatoPrecio(tarjeta.puntos * 50)}</p>
+                    <p><strong>Puntos canjeados:</strong> ${tarjeta.puntosGastados}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="tarjeta-actions">
+                <a href="tienda.html" class="btn btn-primary">Seguir comprando</a>
+                <button class="btn btn-outline" onclick="if(confirm('¿Cerrar sesión?')){cerrarSesionTarjeta();location.reload()}">Cerrar sesión</button>
+              </div>
+              ${tarjeta.transacciones.length > 0 ? `
+                <div class="tarjeta-transacciones">
+                  <h3>Historial de transacciones</h3>
+                  <div class="transacciones-lista">
+                    ${tarjeta.transacciones.slice().reverse().map(t => `
+                      <div class="transaccion-item">
+                        <span class="transaccion-fecha">${formatearFecha(t.fecha)}</span>
+                        <span class="transaccion-tipo ${t.tipo}">${t.tipo === 'acumulacion' ? '+ Acumulación' : '- Canje'}</span>
+                        <span class="transaccion-puntos">${t.tipo === 'acumulacion' ? '+' : '-'}${t.puntos} pts</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </section>
+      `
+    } else {
+      main.innerHTML = `
+        <div class="breadcrumbs"><a href="index.html">Inicio</a> <span>/</span> <span>Tarjeta de Cliente</span></div>
+        <section class="section">
+          <div class="container form-container">
+            <h1 class="page-title">Tarjeta de Cliente TricolorGaming</h1>
+            <p class="page-desc">Regístrate y acumula puntos con cada compra. 1 punto por cada $1,000 COP gastados.</p>
+            <div class="beneficios-tarjeta">
+              <div class="beneficio"><span class="beneficio-icon">${ICONS.points}</span><h3>Acumula puntos</h3><p>Gana puntos en cada compra</p></div>
+              <div class="beneficio"><span class="beneficio-icon">${ICONS.redeem}</span><h3>Canjea puntos</h3><p>1 punto = $50 COP de descuento</p></div>
+              <div class="beneficio"><span class="beneficio-icon">${ICONS.exclusive}</span><h3>Beneficios exclusivos</h3><p>Ofertas especiales para miembros</p></div>
+            </div>
+            <form id="tarjeta-form" class="tarjeta-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="t-nombres">Nombres *</label>
+                  <input type="text" id="t-nombres" required>
+                </div>
+                <div class="form-group">
+                  <label for="t-apellidos">Apellidos *</label>
+                  <input type="text" id="t-apellidos" required>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="t-documento">Documento *</label>
+                  <input type="text" id="t-documento" required>
+                </div>
+                <div class="form-group">
+                  <label for="t-telefono">Teléfono *</label>
+                  <input type="tel" id="t-telefono" required>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="t-email">Email *</label>
+                  <input type="email" id="t-email" required>
+                </div>
+                <div class="form-group">
+                  <label for="t-fecha-nac">Fecha de nacimiento *</label>
+                  <input type="date" id="t-fecha-nac" required>
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary btn-block btn-lg" onclick="registrar()">Registrarme</button>
+            </form>
+            <div id="tarjeta-resultado"></div>
+          </div>
+        </section>
+      `
+    }
+
+    function registrar() {
+      const nombres = document.getElementById('t-nombres').value.trim()
+      const apellidos = document.getElementById('t-apellidos').value.trim()
+      const documento = document.getElementById('t-documento').value.trim()
+      const telefono = document.getElementById('t-telefono').value.trim()
+      const email = document.getElementById('t-email').value.trim()
+      const fechaNacimiento = document.getElementById('t-fecha-nac').value
+
+      if (!nombres || !apellidos || !documento || !telefono || !email || !fechaNacimiento) {
+        alert('Completa todos los campos obligatorios.')
+        return
+      }
+
+      const t = registrarTarjeta({ nombres, apellidos, documento, email, telefono, fechaNacimiento })
+
+      document.getElementById('tarjeta-resultado').innerHTML = `
+        <div class="credit-aprobado">
+          <span class="aprobado-icon">${ICONS.check}</span>
+          <h2>¡Registro exitoso!</h2>
+          <p>Bienvenido, ${t.nombres}.</p>
+          <div class="aprobado-detalles">
+            <p><strong>Puntos de bienvenida:</strong> ${t.puntos} pts</p>
+            <p><strong>Valor inicial:</strong> ${formatoPrecio(t.puntos * 50)}</p>
+          </div>
+          <button class="btn btn-primary" onclick="location.reload()">Ver mi tarjeta</button>
+        </div>
+      `
+      document.getElementById('tarjeta-form').reset()
+    }
+  </script>
+</body>
+</html>

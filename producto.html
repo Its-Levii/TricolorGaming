@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Producto — TricolorGaming</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A0A14'/%3E%3Cpath d='M10 14h4m4 0h4M15 11v6M11 11v6' stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Crect x='4' y='10' width='24' height='12' rx='5' stroke='%23FFD700' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div id="header"></div>
+  <main id="main-content"></main>
+  <div id="footer"></div>
+  <script src="js/icons.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    includeHeader()
+    includeFooter()
+
+    const slug = getParam('slug')
+    const p = PRODUCTOS.find(pr => pr.slug === slug)
+
+    if (!p) {
+      document.getElementById('main-content').innerHTML = `
+        <section class="section">
+          <div class="container">
+            <div class="empty-state">
+              <span class="empty-icon">404</span>
+              <h2>Producto no encontrado</h2>
+              <p>El producto que buscas no existe.</p>
+              <a href="tienda.html" class="btn btn-primary">Volver a la tienda</a>
+            </div>
+          </div>
+        </section>
+      `
+    } else {
+      const marca = MARCAS.find(m => m.id === p.marca)
+      const cat = CATEGORIAS.find(c => c.id === p.categoria)
+      const sub = cat ? cat.subcategorias.find(s => s.id === p.subcategoria) : null
+      const stockActual = getStockActual(p.id)
+      const disponible = p.digital || (stockActual !== null && stockActual > 0)
+      let stockClass
+      if (!disponible) {
+        stockClass = 'out-of-stock'
+      } else if (!p.digital && stockActual !== null && stockActual <= 5) {
+        stockClass = 'low-stock'
+      } else {
+        stockClass = 'in-stock'
+      }
+      let stockText
+      if (p.digital) {
+        stockText = 'Disponible'
+      } else if (stockActual === 0) {
+        stockText = 'Agotado'
+      } else if (stockActual <= 5) {
+        stockText = `Últimas ${stockActual} unidades`
+      } else {
+        stockText = `${stockActual} en inventario`
+      }
+      const tipoTexto = p.digital ? 'Producto Digital' : 'Producto Físico'
+      const stockMax = p.digital ? 99 : (stockActual || 0)
+
+      const variantesHTML = p.variantes ? `
+        <div class="variantes-selector">
+          <h3>Variantes:</h3>
+          <div class="variantes-opciones">
+            ${p.variantes.map((v, i) => `
+              <label class="variante-opcion">
+                <input type="radio" name="variante" value="${i}" ${i === 0 ? 'checked' : ''}>
+                <span class="variante-label">${v.nombre}</span>
+                <span class="variante-precio">${formatoPrecio(v.precio)}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''
+
+      const rels = PRODUCTOS.filter(r => r.categoria === p.categoria && r.id !== p.id).slice(0, 4)
+
+      document.getElementById('main-content').innerHTML = `
+        <div class="breadcrumbs">
+          <a href="index.html">Inicio</a> <span>/</span>
+          <a href="tienda.html">Tienda</a>
+          ${cat ? ` <span>/</span> <a href="tienda.html?cat=${cat.id}">${cat.nombre}</a>` : ''}
+          ${sub ? ` <span>/</span> <a href="tienda.html?cat=${cat.id}&sub=${sub.id}">${sub.nombre}</a>` : ''}
+          <span>/</span> <span>${p.nombre}</span>
+        </div>
+
+        <section class="section">
+          <div class="container">
+            <div class="producto-detalle">
+              <div class="producto-imagen">
+                <img id="producto-imagen" src="${p.imagen}" alt="${p.nombre}">
+                <div class="producto-badges">
+                  ${p.digital ? '<span class="badge-digital">Digital</span>' : ''}
+                  ${p.tipo === 'variable' ? '<span class="badge-variable">Variable</span>' : ''}
+                </div>
+              </div>
+              <div class="producto-info">
+                <span class="producto-marca">${marca ? marca.nombre : p.marca}</span>
+                <h1 class="producto-nombre">${p.nombre}</h1>
+                <div class="producto-rating">${renderStars(p.rating || 4)} <span>(${p.resenas || 0} reseñas)</span></div>
+                <p class="producto-descripcion">${p.descripcion}</p>
+                <div class="producto-tipo">
+                  <span class="tipo-badge ${p.digital ? 'digital' : 'fisico'}">${tipoTexto}</span>
+                </div>
+                ${variantesHTML}
+                <div class="producto-precio" id="producto-precio">${formatoPrecio(p.precioBase)}</div>
+                <div class="producto-stock ${stockClass}">${stockText}</div>
+                <div class="producto-actions" data-product-id="${p.id}">
+                  ${disponible ? `
+                    <div class="cantidad-selector">
+                      <button onclick="cambiarCantidad(-1)">−</button>
+                      <input type="number" id="cantidad-input" value="1" min="1" max="${stockMax}">
+                      <button onclick="cambiarCantidad(1)">+</button>
+                    </div>
+                    <button class="btn btn-primary btn-lg" onclick="addAlCarrito(${p.id})">Agregar al carrito</button>
+                  ` : `
+                    <button class="btn btn-disabled btn-lg" disabled>Agotado</button>
+                  `}
+                </div>
+                <div class="producto-metadata">
+                  <div class="metadata-item">
+                    <strong>Categoría:</strong>
+                    ${cat ? `<a href="tienda.html?cat=${cat.id}">${cat.nombre}</a>` : '—'}
+                    ${sub ? ` / <a href="tienda.html?cat=${cat.id}&sub=${sub.id}">${sub.nombre}</a>` : ''}
+                  </div>
+                  <div class="metadata-item">
+                    <strong>Marca:</strong>
+                    ${marca ? `<a href="tienda.html?marca=${marca.id}">${marca.nombre}</a>` : '—'}
+                  </div>
+                  <div class="metadata-item">
+                    <strong>Tags:</strong> ${p.tags.map(t => renderTag(t)).join(' ')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        ${rels.length > 0 ? `
+          <section class="section section-dark">
+            <div class="container">
+              <h2 class="section-title">Productos relacionados</h2>
+              <div class="productos-grid">${rels.map(renderProductCard).join('')}</div>
+            </div>
+          </section>
+        ` : ''}
+      `
+
+      document.querySelectorAll('input[name="variante"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+          const index = parseInt(this.value)
+          const actions = document.querySelector('.producto-actions')
+          const productId = parseInt(actions.getAttribute('data-product-id'))
+          const prod = PRODUCTOS.find(pr => pr.id === productId)
+          if (prod && prod.variantes && prod.variantes[index]) {
+            document.getElementById('producto-precio').textContent = formatoPrecio(prod.variantes[index].precio)
+            const img = document.getElementById('producto-imagen')
+            if (img) img.src = prod.variantes[index].imagen || prod.imagen
+          }
+        })
+      })
+    }
+
+    function cambiarCantidad(delta) {
+      const input = document.getElementById('cantidad-input')
+      if (!input) return
+      let val = parseInt(input.value) || 1
+      const max = parseInt(input.max) || 99
+      val = Math.max(1, Math.min(max, val + delta))
+      input.value = val
+    }
+
+    function addAlCarrito(productoId) {
+      const radios = document.querySelectorAll('input[name="variante"]')
+      let varianteIndex = null
+      if (radios.length > 0) {
+        const checked = document.querySelector('input[name="variante"]:checked')
+        if (checked) varianteIndex = parseInt(checked.value)
+      }
+      const cantidad = parseInt(document.getElementById('cantidad-input')?.value || 1)
+      const ok = agregarAlCarrito(productoId, varianteIndex, cantidad)
+      if (ok) {
+        const btn = document.querySelector('.producto-actions .btn-primary')
+        if (btn) {
+          btn.innerHTML = ICONS.check + ' Agregado'
+          btn.style.background = 'var(--verde)'
+          setTimeout(() => {
+            btn.textContent = 'Agregar al carrito'
+            btn.style.background = ''
+          }, 1500)
+        }
+      } else {
+        alert('No hay suficiente stock disponible.')
+      }
+    }
+  </script>
+</body>
+</html>
